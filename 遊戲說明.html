@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>遊戲說明</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+  }
+  .container {
+    background: rgba(255,255,255,0.95);
+    border-radius: 20px;
+    padding: 35px 30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    max-width: 560px;
+    width: 100%;
+  }
+  h1 { font-size: 28px; color: #333; margin-bottom: 20px; text-align: center; }
+  .game-section {
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #eee;
+  }
+  .game-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .game-section h2 { font-size: 20px; color: #444; margin-bottom: 8px; }
+  .game-section p { color: #555; line-height: 1.7; margin-bottom: 6px; font-size: 15px; }
+  .game-section ul { padding-left: 20px; color: #555; line-height: 1.8; font-size: 15px; }
+  .back { display: block; text-align: center; margin-top: 20px; color: #667eea; text-decoration: none; font-weight: bold; font-size: 15px; }
+  .back:hover { text-decoration: underline; }
+  @media (max-width: 480px) {
+    .container { padding: 20px 16px; }
+    h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🎮 兒童遊戲樂園 — 遊戲說明</h1>
+
+  <div class="game-section">
+    <h2>🧠 記憶配對</h2>
+    <p><strong>玩法：</strong>點擊卡片翻開，找出兩張相同的動物圖案。</p>
+    <ul>
+      <li>總共 16 張卡片（8 種動物各 2 張）</li>
+      <li>一次翻兩張，相同則配對成功（變綠色鎖定）</li>
+      <li>不同則 0.8 秒後自動蓋回</li>
+      <li>全部配對完成即獲勝</li>
+      <li>記錄步數與已配對數量</li>
+    </ul>
+  </div>
+
+  <div class="game-section">
+    <h2>🔨 打地鼠</h2>
+    <p><strong>玩法：</strong>在 30 秒內，點擊冒出來的地鼠來得分。</p>
+    <ul>
+      <li>9 個洞穴隨機冒出地鼠（🐹）</li>
+      <li>點擊地鼠得 1 分，打中後地鼠會縮回去</li>
+      <li>30 秒倒數結束後顯示總分</li>
+    </ul>
+  </div>
+
+  <div class="game-section">
+    <h2>🔢 猜數字</h2>
+    <p><strong>玩法：</strong>猜一個 1~100 之間的祕密數字，只有 7 次機會。</p>
+    <ul>
+      <li>輸入數字後按「猜！」或 Enter 鍵送出</li>
+      <li>每次猜完會提示「太小了 ⬆」或「太大了 ⬇」</li>
+      <li>猜中或 7 次用完即結束遊戲</li>
+      <li>歷史記錄會顯示所有猜過的數字與提示</li>
+    </ul>
+  </div>
+
+  <a class="back" href="game.html">← 回遊戲大廳</a>
+</div>
+</body>
+</html>

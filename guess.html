@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>猜數字</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+  }
+  .container {
+    background: rgba(255,255,255,0.95);
+    border-radius: 20px;
+    padding: 25px 30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+  }
+  h1 { font-size: 26px; color: #333; margin-bottom: 5px; }
+  .subtitle { color: #666; margin-bottom: 15px; font-size: 14px; }
+  .input-area { margin: 15px 0; }
+  .guess-input {
+    padding: 10px 15px;
+    font-size: 24px;
+    border: 3px solid #667eea;
+    border-radius: 12px;
+    width: 120px;
+    text-align: center;
+    outline: none;
+    font-weight: bold;
+  }
+  .guess-input:focus { border-color: #764ba2; }
+  .btn {
+    background: linear-gradient(145deg, #667eea, #764ba2);
+    color: #fff;
+    border: none;
+    padding: 10px 28px;
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 12px rgba(102,126,234,0.4);
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102,126,234,0.6); }
+  .btn:active { transform: translateY(0); }
+  .history {
+    background: #f0f0f5;
+    border-radius: 12px;
+    padding: 12px;
+    max-height: 220px;
+    overflow-y: auto;
+    margin: 12px 0;
+    text-align: left;
+  }
+  .history-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 16px;
+  }
+  .history-item:nth-child(odd) { background: #e8e8f0; }
+  .num { font-weight: bold; color: #333; }
+  .hint { font-weight: bold; }
+  .hint.up { color: #e67e22; }
+  .hint.down { color: #2980b9; }
+  .hint.correct { color: #27ae60; }
+  .remaining { color: #888; font-size: 14px; margin-top: 5px; }
+  .message { font-size: 18px; font-weight: bold; min-height: 28px; margin-top: 8px; }
+  .back { display: inline-block; margin-top: 12px; color: #667eea; text-decoration: none; font-size: 14px; }
+  .back:hover { text-decoration: underline; }
+  @media (max-width: 480px) {
+    h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🔢 猜數字</h1>
+  <p class="subtitle">猜一個 1~100 的數字，只有 7 次機會！</p>
+  <div class="input-area">
+    <input class="guess-input" id="guessInput" type="number" min="1" max="100" placeholder="?" onkeydown="if(event.key==='Enter')guess()">
+    <button class="btn" style="margin-left:8px;" onclick="guess()">猜！</button>
+  </div>
+  <div class="history" id="history"></div>
+  <div class="remaining">剩餘次數：<span id="left">7</span></div>
+  <div class="message" id="message"></div>
+  <button class="btn" style="margin-top:8px;" onclick="initGame()">🔄 重新開始</button>
+  <a class="back" href="game.html">← 回遊戲大廳</a>
+</div>
+<script>
+  let secret = 0, left = 7, over = false;
+
+  function initGame() {
+    secret = Math.floor(Math.random() * 100) + 1;
+    left = 7; over = false;
+    document.getElementById('left').textContent = 7;
+    document.getElementById('guessInput').value = '';
+    document.getElementById('guessInput').disabled = false;
+    document.getElementById('history').innerHTML = '';
+    document.getElementById('message').textContent = '';
+    document.getElementById('guessInput').focus();
+  }
+
+  function guess() {
+    if (over) return;
+    const input = document.getElementById('guessInput');
+    const val = parseInt(input.value);
+    if (isNaN(val) || val < 1 || val > 100) { alert('請輸入 1~100 的整數！'); return; }
+    left--;
+    document.getElementById('left').textContent = left;
+    const history = document.getElementById('history');
+    const item = document.createElement('div');
+    item.className = 'history-item';
+    let hint = '', cls = '';
+    if (val === secret) {
+      hint = '🎯 正確！'; cls = 'correct';
+      document.getElementById('message').textContent = '🎉 太厲害了！就是 ' + secret + '！';
+      over = true;
+      document.getElementById('guessInput').disabled = true;
+    } else if (val < secret) {
+      hint = '⬆ 太小了'; cls = 'up';
+    } else {
+      hint = '⬇ 太大了'; cls = 'down';
+    }
+    if (left <= 0 && val !== secret) {
+      document.getElementById('message').textContent = '😅 答案是 ' + secret + '，下次再試試！';
+      over = true;
+      document.getElementById('guessInput').disabled = true;
+    }
+    item.innerHTML = '<span class="num">' + val + '</span><span class="hint ' + cls + '">' + hint + '</span>';
+    history.appendChild(item);
+    history.scrollTop = history.scrollHeight;
+    input.value = ''; input.focus();
+  }
+  initGame();
+</script>
+</body>
+</html>

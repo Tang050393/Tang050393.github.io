@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>動物配對記憶遊戲</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 20px;
+  }
+  .container {
+    background: rgba(255,255,255,0.95);
+    border-radius: 20px;
+    padding: 25px 30px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    max-width: 650px;
+    width: 100%;
+    text-align: center;
+  }
+  h1 { font-size: 26px; color: #333; margin-bottom: 5px; }
+  .subtitle { color: #666; margin-bottom: 15px; font-size: 14px; }
+  .stats {
+    display: flex;
+    justify-content: space-between;
+    background: #f0f0f5;
+    padding: 10px 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    font-weight: bold;
+    color: #555;
+  }
+  .stats span { font-size: 18px; color: #764ba2; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 15px;
+  }
+  .card {
+    aspect-ratio: 1;
+    background: linear-gradient(145deg, #667eea, #764ba2);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    user-select: none;
+  }
+  .card:hover { transform: scale(1.05); }
+  .card.flipped { background: #fff; }
+  .card.matched {
+    background: #c8f7c5;
+    transform: scale(0.95);
+    cursor: default;
+    box-shadow: none;
+  }
+  .card.matched:hover { transform: scale(0.95); }
+  .btn {
+    background: linear-gradient(145deg, #667eea, #764ba2);
+    color: #fff;
+    border: none;
+    padding: 10px 28px;
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 12px rgba(102,126,234,0.4);
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(102,126,234,0.6); }
+  .btn:active { transform: translateY(0); }
+  .back { display: inline-block; margin-top: 12px; color: #667eea; text-decoration: none; font-size: 14px; }
+  .back:hover { text-decoration: underline; }
+  .message { margin-top: 12px; font-size: 20px; font-weight: bold; color: #4caf50; min-height: 30px; }
+  @media (max-width: 480px) {
+    .card { font-size: 30px; }
+    .grid { gap: 8px; }
+    h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🧠 動物配對記憶遊戲</h1>
+  <p class="subtitle">翻開卡片，找到相同的動物！</p>
+  <div class="stats">
+    <div>步數：<span id="moves">0</span></div>
+    <div>配對：<span id="pairs">0</span> / 8</div>
+  </div>
+  <div class="grid" id="grid"></div>
+  <button class="btn" onclick="initGame()">🔄 重新開始</button>
+  <div class="message" id="message"></div>
+  <a class="back" href="game.html">← 回遊戲大廳</a>
+</div>
+<script>
+  const animals = ['🐶','🐱','🐼','🐨','🦊','🐸','🐵','🐯'];
+  let cards = [], flipped = [], locked = false, moves = 0, pairs = 0;
+
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [arr[i], arr[j]] = [arr[j], arr[i]]; }
+    return arr;
+  }
+
+  function initGame() {
+    cards = shuffle([...animals, ...animals]);
+    flipped = []; locked = false; moves = 0; pairs = 0;
+    document.getElementById('moves').textContent = 0;
+    document.getElementById('pairs').textContent = 0;
+    document.getElementById('message').textContent = '';
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    cards.forEach((_, i) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.addEventListener('click', () => flipCard(i));
+      grid.appendChild(card);
+    });
+  }
+
+  function flipCard(index) {
+    const els = document.querySelectorAll('#grid .card');
+    if (locked || els[index].classList.contains('flipped') || els[index].classList.contains('matched')) return;
+    els[index].classList.add('flipped');
+    els[index].textContent = cards[index];
+    flipped.push(index);
+    if (flipped.length === 2) {
+      moves++; document.getElementById('moves').textContent = moves;
+      checkMatch();
+    }
+  }
+
+  function checkMatch() {
+    const [i1, i2] = flipped;
+    const els = document.querySelectorAll('#grid .card');
+    locked = true;
+    if (cards[i1] === cards[i2]) {
+      els[i1].classList.add('matched'); els[i2].classList.add('matched');
+      pairs++; document.getElementById('pairs').textContent = pairs;
+      flipped = []; locked = false;
+      if (pairs === animals.length) document.getElementById('message').textContent = '🎉 你贏了！好棒！ 🎉';
+    } else {
+      setTimeout(() => {
+        els[i1].classList.remove('flipped'); els[i1].textContent = '';
+        els[i2].classList.remove('flipped'); els[i2].textContent = '';
+        flipped = []; locked = false;
+      }, 800);
+    }
+  }
+  initGame();
+</script>
+</body>
+</html>
